@@ -48,25 +48,27 @@ class smstrafficSMS extends waSMSAdapter
            return false;
         }
 
-        // Формируем массив параметров
-        $fields = array(
-            'originator' => $from,
-            'phones'     => $to,
-            'message'    => $text,
-            'login'      => $this->getOption('login'),
-            'password'   => $this->getOption('password'),
-            'rus'        => '0' // Транслит текста сообщений
+        // Формируем массив опций запроса
+        $options = array(
+            CURLOPT_URL            => self::URL;
+            CURLOPT_SSL_VERIFYPEER => 0,
+            CURLOPT_HEADER         => 0,
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_TIMEOUT        => 10,
+            CURLOPT_POST           => 1,
+            CURLOPT_POSTFIELDS => array(
+                'originator' => $from,
+                'phones'     => $to,
+                'message'    => $text,
+                'login'      => $this->getOption('login'),
+                'password'   => $this->getOption('password'),
+                'rus'        => '0', // Транслит текста сообщений
+            ),
         );
 
         // Выполняем удаленный запрос
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, self::URL);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-        curl_setopt($ch, CURLOPT_HEADER, 0);
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+        curl_setopt_array($ch, $options);
         $result = curl_exec($ch);
         curl_close($ch);
 
